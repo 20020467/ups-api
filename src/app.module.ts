@@ -23,6 +23,6 @@ import { dataSourceOptions } from './database/data-source';
     TypeOrmModule.forRoot(dataSourceOptions),
   ],
   controllers: [InfoProductController, AppController],
-  providers: [InfoProductService, AppService],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -10,10 +10,13 @@ import {
   Patch,
   Post,
   ParseIntPipe,
+  Get,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './category.dto';
 import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { filterData } from 'libs/helpers/helpers';
 
 @Controller('/category')
 export class CategoryController {
@@ -32,9 +35,16 @@ export class CategoryController {
     @Body() body: UpdateCategoryDto,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ) {
-    const realBody = plainToClass(UpdateCategoryDto, body, {
+    const bodyDto = plainToClass(UpdateCategoryDto, body, {
       excludeExtraneousValues: true,
     });
+    const realBody = filterData(bodyDto);
+
     return this.categoryService.updateCategory(realBody, categoryId);
+  }
+
+  @Get('/getAllCategory')
+  async getAllCategory() {
+    return this.categoryService.getAllCategory();
   }
 }

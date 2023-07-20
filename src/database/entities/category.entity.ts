@@ -6,10 +6,22 @@ export class Category {
   @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
   id: number;
 
-  @Column({ name: 'name', type: 'text', nullable: false })
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+    unique: true,
+  })
   name: string;
 
-  //parent;
+  @Column({
+    name: 'category_parent_id',
+    type: 'int',
+    nullable: true,
+    unsigned: true,
+  })
+  categoryParentId: number;
 
   @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
