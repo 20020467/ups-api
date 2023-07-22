@@ -7,9 +7,10 @@ https://docs.nestjs.com/modules
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from 'src/database/entities/product.entity';
+import { ProductImage } from 'src/database/entities/productImage';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product])],
+  imports: [TypeOrmModule.forFeature([Product, ProductImage])],
   controllers: [ProductController],
   providers: [ProductService],
 })

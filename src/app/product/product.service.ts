@@ -7,22 +7,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/database/entities/product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './product.dto';
+import { ProductImage } from 'src/database/entities/productImage';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    private productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private productImageRepository: Repository<ProductImage>,
   ) {}
 
   async createProduct(body: CreateProductDto) {
-    // check hang, danh muc sp
+    // check danh muc sp
     return await this.productRepository.save(body);
   }
 
   async updateProduct(body: UpdateProductDto) {}
 
-  async getAllProduct(params) {
+  async search(params) {
     return params;
   }
 }

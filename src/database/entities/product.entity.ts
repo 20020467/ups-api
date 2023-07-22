@@ -9,8 +9,11 @@ export class Product {
   @Column({ name: 'category_id', type: 'int', unsigned: true, nullable: false })
   categoryId: number;
 
-  @Column({ name: 'firm_id', type: 'int', unsigned: true, nullable: false })
-  firmId: number;
+  @Column({ name: 'brand', type: 'varchar', nullable: true })
+  brand: string;
+
+  @Column({ name: 'price', type: 'text', nullable: true })
+  price: string;
 
   @Column({ name: 'name', type: 'text', nullable: false })
   name: string;
