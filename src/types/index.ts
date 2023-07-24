@@ -28,6 +28,7 @@ export enum ErrorCode {
   Category_Name_Exist = 'Category_Name_Already_Exist',
   Category_Not_Exist = 'Category_Not_Exist',
   Category_Parent_Not_Exist = 'Category_Parent_Not_Exist',
+  Product_Not_Exist = 'Product Not Exist',
 }
 
 export interface IErrorObject {

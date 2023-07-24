@@ -1,10 +1,18 @@
 import { ProductStatus } from 'src/types';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('infoProduct')
 export class InfoProduct {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
-  id: number;
+  // @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  // id: number;
+
+  @PrimaryColumn({
+    name: 'product_id',
+    type: 'bigint',
+    unsigned: true,
+    nullable: false,
+  })
+  productId: number;
 
   @Column({ name: 'cong_suat', type: 'text', nullable: true })
   cong_suat: string;

@@ -106,7 +106,7 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   @Expose()
-  wattage: String;
+  wattage: string;
 
   @IsNumber()
   @IsOptional()
@@ -122,4 +122,13 @@ export class UpdateProductDto {
   @IsOptional()
   @Expose()
   feature: string;
+}
+
+export interface ISearchProduct {
+  categoryId?: number | null;
+  keyword?: string | null;
+  take?: number | null;
+  skip?: number | null;
+  pageIndex: number | null;
+  pageSize: number | null;
 }
