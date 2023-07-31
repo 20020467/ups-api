@@ -33,6 +33,11 @@ export enum ErrorCode {
   Code_Product_Already_Exist = 'Code Product Already Exist',
 }
 
+export enum KeyCheckCategory {
+  Parent_Category = 1,
+  Category = 2,
+}
+
 export interface IErrorObject {
   statusCode?: number;
   errorCode?: ErrorCode;

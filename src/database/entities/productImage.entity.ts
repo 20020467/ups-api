@@ -3,7 +3,14 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('productImage')
 export class ProductImage {
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn({
+    name: 'id',
+    type: 'int',
+    unsigned: true,
+  })
+  id: number;
+
+  @Column({
     name: 'product_id',
     type: 'int',
     unsigned: true,

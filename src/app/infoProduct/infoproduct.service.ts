@@ -6,7 +6,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateInfoProductDto, UpdateInfoProductDto } from './infoProduct.dto';
-import { InfoProduct } from 'src/database/entities/infoProduct';
+import { InfoProduct } from 'src/database/entities/infoProduct.entity';
 import { Product } from 'src/database/entities/product.entity';
 import { ErrorCode } from 'src/types';
 

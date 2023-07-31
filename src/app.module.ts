@@ -14,13 +14,13 @@ import { dataSourceOptions } from './database/data-source';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
     InfoProductModule,
     FirmModule,
     CategoryModule,
     ProductModule,
     UserModule,
     LoggerModule,
-    TypeOrmModule.forRoot(dataSourceOptions),
   ],
   controllers: [AppController],
   providers: [AppService],

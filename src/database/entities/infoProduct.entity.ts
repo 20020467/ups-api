@@ -17,9 +17,6 @@ export class InfoProduct {
   @Column({ name: 'cong_suat', type: 'text', nullable: true })
   cong_suat: string;
 
-  @Column({ name: 'cong_suat', type: 'text', nullable: true })
-  test: string;
-
   // thông số đầu vào
   @Column({ name: 'dai_dien_ap', type: 'text', nullable: true })
   dai_dien_ap: string;

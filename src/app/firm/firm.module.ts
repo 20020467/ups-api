@@ -6,7 +6,7 @@ https://docs.nestjs.com/modules
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Firm } from 'src/database/entities/firm';
+import { Firm } from 'src/database/entities/firm.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Firm])],

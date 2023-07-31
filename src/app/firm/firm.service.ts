@@ -4,7 +4,7 @@ https://docs.nestjs.com/providers#services
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Firm } from 'src/database/entities/firm';
+import { Firm } from 'src/database/entities/firm.entity';
 import { Repository } from 'typeorm';
 import { CreateFirmDto, UpdateFirmDto } from './firm.dto';
 

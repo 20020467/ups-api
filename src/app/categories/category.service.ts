@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/database/entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './category.dto';
-import { ErrorCode, IUpdateCategory } from 'src/types';
+import { ErrorCode, IUpdateCategory, KeyCheckCategory } from 'src/types';
 
 @Injectable()
 export class CategoryService {
@@ -16,51 +16,33 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async checkParentCategory(id: number) {
-    const categoryParent = await this.categoryRepository
-      .createQueryBuilder('c')
-      .where('c.id = :id', {
-        id,
-      })
-      .getOne();
-    if (!categoryParent) {
-      throw new BadRequestException(ErrorCode.Category_Parent_Not_Exist);
-    }
-  }
-
   async createCategory(body: CreateCategoryDto) {
     const { name, categoryParentId } = body;
 
-    const categoryName = await this.categoryRepository
-      .createQueryBuilder('c')
-      .where('c.name = :name', {
-        name,
-      })
-      .getOne();
-    if (categoryName) {
-      throw new BadRequestException(ErrorCode.Category_Name_Exist);
-    }
+    await this.checkNameCategory(name);
 
     if (categoryParentId) {
-      await this.checkParentCategory(categoryParentId);
+      await this.checkCategoryById(
+        KeyCheckCategory.Parent_Category,
+        categoryParentId,
+      );
     }
 
     return await this.categoryRepository.save(body);
   }
 
   async updateCategory(body: IUpdateCategory, categoryId: number) {
-    const category = await this.categoryRepository.findOne({
-      where: {
-        id: categoryId,
-      },
-    });
-
-    if (!category) {
-      throw new BadRequestException(ErrorCode.Category_Not_Exist);
-    }
+    await this.checkCategoryById(KeyCheckCategory.Category, categoryId);
 
     if (body.categoryParentId) {
-      await this.checkParentCategory(body.categoryParentId);
+      await this.checkCategoryById(
+        KeyCheckCategory.Parent_Category,
+        body.categoryParentId,
+      );
+    }
+
+    if (body.name) {
+      await this.checkNameCategory(body.name);
     }
     return await this.categoryRepository.update(categoryId, body);
   }
@@ -87,4 +69,33 @@ export class CategoryService {
   }
 
   async deleteCategory() {}
+
+  async checkCategoryById(key: KeyCheckCategory, id: number) {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!category) {
+      if (key === KeyCheckCategory.Parent_Category) {
+        throw new BadRequestException(ErrorCode.Category_Parent_Not_Exist);
+      }
+
+      if (key === KeyCheckCategory.Category) {
+        throw new BadRequestException(ErrorCode.Category_Not_Exist);
+      }
+    }
+  }
+
+  async checkNameCategory(name: string) {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        name: name,
+      },
+    });
+
+    if (category) {
+      throw new BadRequestException(ErrorCode.Category_Name_Exist);
+    }
+  }
 }

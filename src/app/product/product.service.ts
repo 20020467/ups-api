@@ -11,7 +11,7 @@ import {
   ISearchProduct,
   UpdateProductDto,
 } from './product.dto';
-import { ProductImage } from 'src/database/entities/productImage';
+import { ProductImage } from 'src/database/entities/productImage.entity';
 import { Category } from 'src/database/entities/category.entity';
 import { ErrorCode } from 'src/types';
 
@@ -30,22 +30,28 @@ export class ProductService {
     // check danh muc sp
     await this.checkCategory(body.categoryId);
     // check code
-    if (this.checkCodeProduct(body.code)) {
-      throw new BadRequestException(ErrorCode.Code_Product_Already_Exist);
-    }
+    await this.checkCodeProduct(body.code);
 
     return await this.productRepository.save(body);
   }
 
   async updateProduct(body: UpdateProductDto, productId: number) {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new BadRequestException(ErrorCode.Product_Not_Exist);
+    }
+
     if (body.categoryId) {
       await this.checkCategory(body.categoryId);
     }
 
     if (body.code) {
-      if (this.checkCodeProduct(body.code)) {
-        throw new BadRequestException(ErrorCode.Code_Product_Already_Exist);
-      }
+      await this.checkCodeProduct(body.code);
     }
 
     return await this.productRepository.update(productId, body);
@@ -94,8 +100,12 @@ export class ProductService {
   }
 
   async checkCodeProduct(code: string) {
-    return await this.productRepository.findOne({
+    const product = await this.productRepository.findOne({
       where: { code: code },
     });
+
+    if (product) {
+      throw new BadRequestException(ErrorCode.Code_Product_Already_Exist);
+    }
   }
 }
