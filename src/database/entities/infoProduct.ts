@@ -3,8 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('infoProduct')
 export class InfoProduct {
-  // @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
-  // id: number;
+  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  id: number;
 
   @PrimaryColumn({
     name: 'product_id',
@@ -16,6 +16,9 @@ export class InfoProduct {
 
   @Column({ name: 'cong_suat', type: 'text', nullable: true })
   cong_suat: string;
+
+  @Column({ name: 'cong_suat', type: 'text', nullable: true })
+  test: string;
 
   // thông số đầu vào
   @Column({ name: 'dai_dien_ap', type: 'text', nullable: true })

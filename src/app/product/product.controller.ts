@@ -10,6 +10,7 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
@@ -24,15 +25,12 @@ import { plainToClass } from 'class-transformer';
 export class ProductController {
   constructor(private readonly ProductService: ProductService) {}
 
-  @Post('/createProduct/:categoryId')
-  async createProduct(
-    @Body() body: CreateProductDto,
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ) {
+  @Post('/createProduct')
+  async createProduct(@Body() body: CreateProductDto) {
     const realBody = plainToClass(CreateProductDto, body, {
       excludeExtraneousValues: true,
     });
-    return this.ProductService.createProduct(realBody, categoryId);
+    return this.ProductService.createProduct(realBody);
   }
 
   @Put('/updateProduct/:productId')

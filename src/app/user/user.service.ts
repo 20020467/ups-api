@@ -4,16 +4,21 @@ https://docs.nestjs.com/providers#services
 
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { Users } from 'src/database/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @InjectRepository(Users) private userRepository: Repository<Users>,
+  ) {}
 
   async login() {
-    const password = '123456';
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const newPassword = await bcrypt.hash(password, salt);
-    return newPassword;
+    return await this.userRepository.find();
   }
+
+  async 
 }

@@ -22,7 +22,7 @@ import { dataSourceOptions } from './database/data-source';
     LoggerModule,
     TypeOrmModule.forRoot(dataSourceOptions),
   ],
-  controllers: [InfoProductController, AppController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

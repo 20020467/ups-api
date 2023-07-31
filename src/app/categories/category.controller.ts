@@ -11,6 +11,7 @@ import {
   Post,
   ParseIntPipe,
   Get,
+  Put,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './category.dto';
@@ -30,7 +31,7 @@ export class CategoryController {
     return this.categoryService.createCategory(realBody);
   }
 
-  @Patch('/update/:categoryId')
+  @Put('/update/:categoryId')
   async updateCategory(
     @Body() body: UpdateCategoryDto,
     @Param('categoryId', ParseIntPipe) categoryId: number,

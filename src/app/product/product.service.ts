@@ -26,17 +26,26 @@ export class ProductService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async createProduct(body: CreateProductDto, categoryId: number) {
+  async createProduct(body: CreateProductDto) {
     // check danh muc sp
-    this.checkCategory(categoryId);
+    await this.checkCategory(body.categoryId);
+    // check code
+    if (this.checkCodeProduct(body.code)) {
+      throw new BadRequestException(ErrorCode.Code_Product_Already_Exist);
+    }
 
     return await this.productRepository.save(body);
   }
 
   async updateProduct(body: UpdateProductDto, productId: number) {
-    const categoryId = body.categoryId;
-    if (categoryId) {
-      this.checkCategory(categoryId);
+    if (body.categoryId) {
+      await this.checkCategory(body.categoryId);
+    }
+
+    if (body.code) {
+      if (this.checkCodeProduct(body.code)) {
+        throw new BadRequestException(ErrorCode.Code_Product_Already_Exist);
+      }
     }
 
     return await this.productRepository.update(productId, body);
@@ -72,12 +81,21 @@ export class ProductService {
     return result;
   }
 
+  async uploadS3() {}
+
   async checkCategory(categoryId: number) {
     const category = await this.categoryRepository.findOne({
       where: { id: categoryId },
     });
+
     if (!category) {
       throw new BadRequestException(ErrorCode.Category_Not_Exist);
     }
+  }
+
+  async checkCodeProduct(code: string) {
+    return await this.productRepository.findOne({
+      where: { code: code },
+    });
   }
 }
