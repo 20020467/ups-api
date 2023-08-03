@@ -14,6 +14,9 @@ export class InfoProduct {
   })
   productId: number;
 
+  @Column({ name: 'test', type: 'varchar', nullable: true })
+  test: string;
+
   @Column({ name: 'cong_suat', type: 'text', nullable: true })
   cong_suat: string;
 

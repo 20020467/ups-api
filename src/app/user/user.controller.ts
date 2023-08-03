@@ -2,10 +2,11 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller, Post, Get, Patch } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body } from '@nestjs/common';
 import { UserService } from './user.service';
+import { LoginDto } from './login.dto';
 
-@Controller('/user')
+@Controller()
 export class UserController {
   constructor(private readonly UserService: UserService) {}
 
@@ -13,8 +14,8 @@ export class UserController {
   async register() {}
 
   @Post('/login')
-  async login() {
-    return this.UserService.login();
+  async login(@Body() body: LoginDto) {
+    return this.UserService.login(body);
   }
 
   @Get()

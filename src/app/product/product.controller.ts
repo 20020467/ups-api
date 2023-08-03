@@ -10,7 +10,7 @@ import {
   Param,
   ParseIntPipe,
   Put,
-  BadRequestException,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
@@ -19,18 +19,14 @@ import {
   UpdateProductDto,
 } from './product.dto';
 import { assignPagingProduct } from 'libs/helpers/utils';
-import { plainToClass } from 'class-transformer';
-
+import { Express } from '../../types/Express';
 @Controller('/product')
 export class ProductController {
   constructor(private readonly ProductService: ProductService) {}
 
   @Post('/createProduct')
   async createProduct(@Body() body: CreateProductDto) {
-    const realBody = plainToClass(CreateProductDto, body, {
-      excludeExtraneousValues: true,
-    });
-    return this.ProductService.createProduct(realBody);
+    return this.ProductService.createProduct(body);
   }
 
   @Put('/updateProduct/:productId')
@@ -46,4 +42,9 @@ export class ProductController {
     assignPagingProduct(body);
     return this.ProductService.search(body);
   }
+
+  // @Post('/upload')
+  // async uploadImage(@UploadedFiles files: Array<Express.Multer.File>) {
+
+  // }
 }

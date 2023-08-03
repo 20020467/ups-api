@@ -14,7 +14,11 @@ async function bootstrap() {
   app.useLogger(new CustomLogger());
   const logger = new Logger();
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
   app.useGlobalFilters(
     new AppExceptionFilter(httpAdapter, new LoggerService()),
   );

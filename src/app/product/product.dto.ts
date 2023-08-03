@@ -6,7 +6,7 @@ import {
   IsNumber,
   IsIn,
 } from 'class-validator';
-import { ProductStatus } from 'src/types';
+import { KeyPrice, ProductStatus } from 'src/types';
 
 export class CreateProductDto {
   @IsNumber()
@@ -127,6 +127,7 @@ export class UpdateProductDto {
 export interface ISearchProduct {
   categoryId?: number | null;
   keyword?: string | null;
+  price?: KeyPrice | null;
   take?: number | null;
   skip?: number | null;
   pageIndex: number | null;

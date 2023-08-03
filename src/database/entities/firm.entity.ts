@@ -1,4 +1,3 @@
-import { ProductStatus } from 'src/types';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('firm')

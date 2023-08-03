@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { InfoProductService } from './infoproduct.service';
 import { CreateInfoProductDto, UpdateInfoProductDto } from './infoProduct.dto';
-import { plainToClass } from 'class-transformer';
 import { filterData } from 'libs/helpers/helpers';
 
 @Controller('/info')
@@ -25,10 +24,7 @@ export class InfoProductController {
     @Body() body: CreateInfoProductDto,
     @Param('productId', ParseIntPipe) productId: number,
   ) {
-    const realBody = plainToClass(CreateInfoProductDto, body, {
-      excludeExtraneousValues: true,
-    });
-    return this.infoProductService.createInfoProduct(realBody, productId);
+    return this.infoProductService.createInfoProduct(body, productId);
   }
 
   @Put('/update/:InfoProductId')
@@ -36,10 +32,7 @@ export class InfoProductController {
     @Body() body: UpdateInfoProductDto,
     @Param('InfoProductId', ParseIntPipe) InfoProductId: number,
   ) {
-    const bodyDto = plainToClass(UpdateInfoProductDto, body, {
-      excludeExtraneousValues: true,
-    });
-    const realBody = filterData(bodyDto);
+    const realBody = filterData(body);
 
     return this.infoProductService.updateInfoProduct(realBody, InfoProductId);
   }

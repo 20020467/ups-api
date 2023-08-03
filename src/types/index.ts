@@ -38,6 +38,12 @@ export enum KeyCheckCategory {
   Category = 2,
 }
 
+export enum KeyPrice {
+  CONTACT = 0,
+  ASC = 1,
+  DESC = 2,
+}
+
 export interface IErrorObject {
   statusCode?: number;
   errorCode?: ErrorCode;

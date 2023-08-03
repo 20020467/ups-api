@@ -25,10 +25,7 @@ export class CategoryController {
 
   @Post('/create')
   async createCategory(@Body() body: CreateCategoryDto) {
-    const realBody = plainToClass(CreateCategoryDto, body, {
-      excludeExtraneousValues: true,
-    });
-    return this.categoryService.createCategory(realBody);
+    return this.categoryService.createCategory(body);
   }
 
   @Put('/update/:categoryId')
@@ -36,10 +33,7 @@ export class CategoryController {
     @Body() body: UpdateCategoryDto,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ) {
-    const bodyDto = plainToClass(UpdateCategoryDto, body, {
-      excludeExtraneousValues: true,
-    });
-    const realBody = filterData(bodyDto);
+    const realBody = filterData(body);
 
     return this.categoryService.updateCategory(realBody, categoryId);
   }

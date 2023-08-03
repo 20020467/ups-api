@@ -13,7 +13,7 @@ import {
 } from './product.dto';
 import { ProductImage } from 'src/database/entities/productImage.entity';
 import { Category } from 'src/database/entities/category.entity';
-import { ErrorCode } from 'src/types';
+import { ErrorCode, KeyPrice } from 'src/types';
 
 @Injectable()
 export class ProductService {
@@ -58,7 +58,7 @@ export class ProductService {
   }
 
   async search(body: ISearchProduct) {
-    const { take, skip, categoryId, keyword } = body;
+    const { take, skip, categoryId, keyword, price } = body;
     const queryBuilder = this.productRepository
       .createQueryBuilder('p')
       .leftJoinAndMapMany(
@@ -82,7 +82,19 @@ export class ProductService {
       });
     }
 
-    const result = await queryBuilder.orderBy('p.name', 'ASC').getMany();
+    if (price === KeyPrice.CONTACT) {
+      queryBuilder.andWhere('p.price IS NULL');
+    }
+
+    if (price === KeyPrice.ASC) {
+      queryBuilder.andWhere('p.price IS NOT NULL').orderBy('p.price', 'ASC');
+    }
+
+    if (price === KeyPrice.DESC) {
+      queryBuilder.andWhere('p.price IS NOT NULL').orderBy('p.price', 'DESC');
+    }
+
+    const result = await queryBuilder.addOrderBy('p.name', 'ASC').getMany();
 
     return result;
   }

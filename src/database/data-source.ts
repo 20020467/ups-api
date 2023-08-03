@@ -13,8 +13,10 @@ export const dataSourceOptions: DataSourceOptions = {
   database: config.MYSQL.DB_NAME,
   synchronize: false,
   logging: true,
-  entities: ['src/database/entities/**/*{.js,.ts}'],
-  migrations: ['src/database/migrations/*{.js,.ts}'],
+  // entities: ['src/database/entities/**/*{.js,.ts}'],
+  // migrations: ['src/database/migrations/*{.js,.ts}'],
+  entities: [...Entities],
+  migrations: [...Migrations],
 };
 
 const dataSource = new DataSource(dataSourceOptions);
