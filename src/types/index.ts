@@ -44,6 +44,12 @@ export enum KeyPrice {
   DESC = 2,
 }
 
+export enum KeyGetCategory {
+  SIDEBAR = 'SIDEBAR',
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+}
+
 export interface IErrorObject {
   statusCode?: number;
   errorCode?: ErrorCode;

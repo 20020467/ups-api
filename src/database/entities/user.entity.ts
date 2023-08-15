@@ -3,17 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class Users {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
   id: number;
-
-  @Column({
-    name: 'username',
-    type: 'varchar',
-    length: 100,
-    unique: true,
-    nullable: false,
-  })
-  username: string;
 
   @Column({ name: 'password', select: false, type: 'varchar', nullable: false })
   password: string;

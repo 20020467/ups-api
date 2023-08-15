@@ -3,12 +3,12 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('infoProduct')
 export class InfoProduct {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
   id: number;
 
   @PrimaryColumn({
     name: 'product_id',
-    type: 'bigint',
+    type: 'int',
     unsigned: true,
     nullable: false,
   })

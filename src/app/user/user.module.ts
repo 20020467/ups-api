@@ -5,12 +5,25 @@ https://docs.nestjs.com/modules
 */
 
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/user.entity';
+import { JwtAuthenticationModule } from '@app/jwt-authentication';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { IConfig, IConfigAuth } from 'src/config';
 
 @Module({
-  imports: [JwtModule, TypeOrmModule.forFeature([Users])],
+  imports: [
+    TypeOrmModule.forFeature([Users]),
+    JwtAuthenticationModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService<IConfig, true>) => {
+        return {
+          ...configService.get<IConfigAuth>('auth'),
+        };
+      },
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [UserController],
   providers: [UserService],
 })

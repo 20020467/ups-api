@@ -18,6 +18,8 @@ import { CreateCategoryDto, UpdateCategoryDto } from './category.dto';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { filterData } from 'libs/helpers/helpers';
+import { KeyGetCategory } from 'src/types';
+import { Public } from 'libs/decorators/public.decorator';
 
 @Controller('/category')
 export class CategoryController {
@@ -38,8 +40,21 @@ export class CategoryController {
     return this.categoryService.updateCategory(realBody, categoryId);
   }
 
-  @Get('/getAllCategory')
-  async getAllCategory() {
-    return this.categoryService.getAllCategory();
+  @Public()
+  @Get('/getForSideBar')
+  async getAllCateForSideBar() {
+    return this.categoryService.getAllCateForSideBar();
+  }
+
+  @Get('/getForCreate')
+  async getAllCateForCreate() {
+    return this.categoryService.getCateForCreate();
+  }
+
+  @Get('/getForUpdate/:categoryId')
+  async getAllCateForUpdate(
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    return this.categoryService.getCateForUpdate(categoryId);
   }
 }

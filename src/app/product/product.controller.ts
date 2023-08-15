@@ -10,7 +10,8 @@ import {
   Param,
   ParseIntPipe,
   Put,
-  UploadedFiles,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
@@ -19,7 +20,9 @@ import {
   UpdateProductDto,
 } from './product.dto';
 import { assignPagingProduct } from 'libs/helpers/utils';
-import { Express } from '../../types/Express';
+import { Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Public } from 'libs/decorators/public.decorator';
 @Controller('/product')
 export class ProductController {
   constructor(private readonly ProductService: ProductService) {}
@@ -37,14 +40,20 @@ export class ProductController {
     return this.ProductService.updateProduct(body, productId);
   }
 
+  @Public()
   @Post('/search')
   async search(@Body() body: ISearchProduct) {
     assignPagingProduct(body);
     return this.ProductService.search(body);
   }
 
-  // @Post('/upload')
-  // async uploadImage(@UploadedFiles files: Array<Express.Multer.File>) {
+  @Public()
+  @Post('/getProductById/:productId')
+  async getProduct() {}
 
-  // }
+  @Post('/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.ProductService.uploadS3(file, file.originalname);
+  }
 }

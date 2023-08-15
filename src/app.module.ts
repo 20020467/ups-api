@@ -11,6 +11,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/data-source';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { S3UploadModule } from '@app/s3-upload';
+import { IConfig, IConfigAuth, config } from './config';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AllExceptionsFilter } from 'libs/core/src/filters/http-exception.filter';
+import { JwtAuthenticationModule } from '@app/jwt-authentication';
+import { JwtAuthenticationGuard } from '@app/jwt-authentication/jwt-authentication.guard';
+import { TransformResponseInterceptor } from 'libs/core/src/interceptors/transform-res.interceptor';
 
 @Module({
   imports: [
@@ -21,8 +29,46 @@ import { dataSourceOptions } from './database/data-source';
     UserModule,
     LoggerModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [() => config],
+      cache: true,
+    }),
+    /* -------------------------------------------------------------------------- */
+    /*                          Basic JWT Authentication                          */
+    /* -------------------------------------------------------------------------- */
+    JwtAuthenticationModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService<IConfig, true>) => {
+        return {
+          ...configService.get<IConfigAuth>('auth'),
+        };
+      },
+      inject: [ConfigService],
+    }),
+    S3UploadModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService<IConfig, true>) => ({
+        ...configService.get('upload'),
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthenticationGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformResponseInterceptor,
+    },
+  ],
 })
 export class AppModule {}

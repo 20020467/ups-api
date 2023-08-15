@@ -4,11 +4,14 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { CustomLogger } from 'libs/core/src/logging/logging.service';
 import { AppExceptionFilter } from './exceptionFilter/AppExceptionFilter';
 import { LoggerService } from './logger/logger.service';
+import * as express from 'express';
+require('dotenv').config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   });
+  app.use(express.json({ limit: '10mb' }));
 
   const httpAdapter = app.get(HttpAdapterHost);
   app.useLogger(new CustomLogger());

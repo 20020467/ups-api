@@ -7,7 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/database/entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './category.dto';
-import { ErrorCode, IUpdateCategory, KeyCheckCategory } from 'src/types';
+import {
+  ErrorCode,
+  IUpdateCategory,
+  KeyCheckCategory,
+  KeyGetCategory,
+} from 'src/types';
 
 @Injectable()
 export class CategoryService {
@@ -47,25 +52,69 @@ export class CategoryService {
     return await this.categoryRepository.update(categoryId, body);
   }
 
-  async getAllCategory() {
+  async getAllCateForSideBar() {
     const result = await this.categoryRepository
       .createQueryBuilder('c')
       .where('c.categoryParentId IS NULL')
       .leftJoinAndMapMany(
-        'c.categoryChild',
+        'c.children',
         Category,
         'cateChild1',
         'cateChild1.categoryParentId = c.id',
       )
       .leftJoinAndMapMany(
-        'cateChild1.categoryChild',
+        'cateChild1.children',
         Category,
         'cateChild2',
         'cateChild2.categoryParentId = cateChild1.id',
       )
       .getMany();
+    return result;
+  }
+
+  async getCateForCreate() {
+    const result = await this.categoryRepository
+      .createQueryBuilder('c')
+      .leftJoinAndMapOne(
+        'c.parent',
+        Category,
+        'parent',
+        'parent.id = c.categoryParentId',
+      )
+      .select([
+        'c.id',
+        'c.name',
+        'c.description',
+        'c.benefit',
+        'parent.id',
+        'parent.name',
+      ])
+      .getMany();
+    return result;
+  }
+
+  async getCateForUpdate(categoryId: number) {
+    const listCategory = await this.categoryRepository.find();
+    const listchild = [];
+
+    const listChild1 = this.findChildren(categoryId, listCategory);
+    listchild.push(...listChild1);
+
+    listChild1.map((item, index) => {
+      const list = this.findChildren(Number(item.id), listCategory);
+      listchild.push(...list);
+    });
+
+    const result = listCategory.filter((category) => {
+      if (Number(category.id) === categoryId) return false;
+      return !listchild.find((item) => item.id === category.id);
+    });
 
     return result;
+  }
+
+  findChildren(categoryId: number, listCategory: Category[]) {
+    return listCategory.filter((item) => item.categoryParentId === categoryId);
   }
 
   async deleteCategory() {}

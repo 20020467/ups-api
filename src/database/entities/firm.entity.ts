@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('firm')
 export class Firm {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
   id: number;
 
   @Column({ name: 'name', type: 'text', nullable: false })

@@ -14,6 +14,9 @@ import {
 import { ProductImage } from 'src/database/entities/productImage.entity';
 import { Category } from 'src/database/entities/category.entity';
 import { ErrorCode, KeyPrice } from 'src/types';
+import { InfoProduct } from 'src/database/entities/infoProduct.entity';
+import { S3UploadService } from '@app/s3-upload';
+import { Express } from '../../types/Express';
 
 @Injectable()
 export class ProductService {
@@ -24,18 +27,55 @@ export class ProductService {
     private productImageRepository: Repository<ProductImage>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    private s3UploadServie: S3UploadService,
   ) {}
 
   async createProduct(body: CreateProductDto) {
+    const { url } = body;
+
     // check danh muc sp
     await this.checkCategory(body.categoryId);
     // check code
     await this.checkCodeProduct(body.code);
 
-    return await this.productRepository.save(body);
+    delete body['url'];
+    const product = await this.productRepository.save(body);
+
+    if (url) {
+      const saveUrl = url.map((item) => {
+        this.productImageRepository.save({
+          productId: product.id,
+          url: item,
+        });
+      });
+      await Promise.all(saveUrl);
+    }
+    return product.id;
+  }
+
+  async getProductById(productId: number) {
+    const result = await this.productRepository
+      .createQueryBuilder('p')
+      .leftJoinAndMapMany(
+        'p.images',
+        ProductImage,
+        'pImage',
+        'pImage.productId = p.id',
+      )
+      .leftJoinAndMapMany(
+        'p.info',
+        InfoProduct,
+        'pInfo',
+        'pInfo.productId = p.id',
+      )
+      .where('p.id = :productId', { productId: productId })
+      .getOne();
+
+    return result;
   }
 
   async updateProduct(body: UpdateProductDto, productId: number) {
+    const { categoryId, code, url } = body;
     const product = await this.productRepository.findOne({
       where: {
         id: productId,
@@ -46,13 +86,20 @@ export class ProductService {
       throw new BadRequestException(ErrorCode.Product_Not_Exist);
     }
 
-    if (body.categoryId) {
-      await this.checkCategory(body.categoryId);
+    if (categoryId) {
+      await this.checkCategory(categoryId);
     }
 
-    if (body.code) {
-      await this.checkCodeProduct(body.code);
+    if (code) {
+      await this.checkCodeProduct(code);
     }
+
+    if (url) {
+      const oldUrl = ['1', '2'];
+      const deleteUrl = oldUrl.filter((item) => !url.includes(item));
+      const addUrl = url.filter((item) => !oldUrl.includes(item));
+    }
+    delete body['url'];
 
     return await this.productRepository.update(productId, body);
   }
@@ -66,6 +113,12 @@ export class ProductService {
         ProductImage,
         'pImage',
         'pImage.productId = p.id',
+      )
+      .leftJoinAndMapMany(
+        'p.info',
+        InfoProduct,
+        'pInfo',
+        'pInfo.productId = p.id',
       )
       .take(take)
       .skip(skip);
@@ -99,7 +152,9 @@ export class ProductService {
     return result;
   }
 
-  async uploadS3() {}
+  async uploadS3(image: Express.Multer.File, fileName: string) {
+    return this.s3UploadServie.putImageToS3(image, fileName);
+  }
 
   async checkCategory(categoryId: number) {
     const category = await this.categoryRepository.findOne({

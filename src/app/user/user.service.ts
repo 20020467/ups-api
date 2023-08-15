@@ -3,19 +3,19 @@ https://docs.nestjs.com/providers#services
 */
 
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Users } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './login.dto';
 import { ErrorCode } from 'src/types';
+import { JwtAuthenticationService } from '@app/jwt-authentication';
 
 @Injectable()
 export class UserService {
   constructor(
-    private jwtService: JwtService,
     @InjectRepository(Users) private userRepository: Repository<Users>,
+    private jwtAuthenticationService: JwtAuthenticationService,
   ) {}
 
   async login({ email, password }: LoginDto) {
@@ -35,10 +35,10 @@ export class UserService {
       throw new BadRequestException(ErrorCode.Password_Not_True);
     }
 
-    const payload = {
-      id: user.id,
-    };
+    const { token, refreshToken } =
+      await this.jwtAuthenticationService.generateToken(user);
+    return { token: token, refreshToken: refreshToken };
   }
 
-  async generateToken(payload: any) {}
+  async forgotPassword() {}
 }

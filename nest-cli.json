@@ -3,6 +3,27 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "s3-upload": {
+      "type": "library",
+      "root": "libs/s3-upload",
+      "entryFile": "index",
+      "sourceRoot": "libs/s3-upload/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/s3-upload/tsconfig.lib.json"
+      }
+    },
+    "jwt-authentication": {
+      "type": "library",
+      "root": "libs/jwt-authentication",
+      "entryFile": "index",
+      "sourceRoot": "libs/jwt-authentication/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/jwt-authentication/tsconfig.lib.json"
+      }
+    }
   }
 }
